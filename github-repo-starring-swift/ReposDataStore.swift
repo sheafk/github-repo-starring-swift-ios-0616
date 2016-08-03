@@ -28,4 +28,23 @@ class ReposDataStore {
         }
     }
 
+
+
+func toggleStarStatusForRepository(repository: GithubRepository, completion: () -> ()) {
+    GithubAPIClient.checkIfRepositoryIsStarred(repository.fullName) {
+        (isStarred) in
+        
+        if isStarred == true {
+            GithubAPIClient.unstarRepository(repository.fullName, completion: {
+                completion()
+            })
+        } else {
+            GithubAPIClient.starRepository(repository.fullName, completion: {
+                completion()
+            })
+        }
+    }
+    
+    }
+    
 }

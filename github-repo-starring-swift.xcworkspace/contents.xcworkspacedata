@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:github-repo-starring-swift/Secrets.swift">
+   </FileRef>
+   <FileRef
       location = "group:github-repo-starring-swift.xcodeproj">
    </FileRef>
    <FileRef

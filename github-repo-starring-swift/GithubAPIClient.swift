@@ -9,9 +9,9 @@
 import UIKit
 
 class GithubAPIClient {
-    
+
     class func getRepositoriesWithCompletion(completion: (NSArray) -> ()) {
-        let urlString = "\(githubAPIURL)/repositories?client_id=\(githubClientID)&client_secret=\(githubClientSecret)"
+        let urlString = "https://api.github.com/repositories?client_id=57c08e03e7d8a358ea2b&client_secret=7e7c7493f002b56673e1cadeb21eba00db739c19"
         let url = NSURL(string: urlString)
         let session = NSURLSession.sharedSession()
         
@@ -28,5 +28,102 @@ class GithubAPIClient {
         task.resume()
     }
     
+    //check if it is starred
+    class func checkIfRepositoryIsStarred(fullName: String, completion:(Bool) ->()) {
+        
+        let session = NSURLSession.sharedSession()
+        let urlString = "https://api.github.com/user/starred/\(fullName)"
+        let url = NSURL(string: urlString)
+        
+        if let unwrappedURL = url {
+            
+            let request = NSMutableURLRequest(URL: unwrappedURL)
+            request.HTTPMethod = "GET"
+            request.addValue(secret, forHTTPHeaderField: "Authorization")
+            
+            let task = session.dataTaskWithRequest(request) {
+                
+                (data, response, error) in
+                
+                if let response = response as? NSHTTPURLResponse {
+                    if response.statusCode == 204 {
+                        completion(true)
+                        print("this repo is starred already")
+                    }
+                    else if response.statusCode == 404 {
+                        completion(false)
+                        print("this repo is not starred yet")
+                    } else {
+                        print("Error get: \(error)")
+                    }
+                }
+            }
+            task.resume()
+    } 
 }
+    
+    //This adds a star
+    class func starRepository(fullName: String, completion: () -> ()) {
+        
+        let session = NSURLSession.sharedSession()
+        let urlString = "https://api.github.com/user/starred/\(fullName)"
+        let url = NSURL(string: urlString)
+        
+        if let unwrappedURL = url {
+            
+            let request = NSMutableURLRequest(URL: unwrappedURL)
+            request.HTTPMethod = "PUT"
+            request.addValue("secret", forHTTPHeaderField: "Authorization")
+            
+            let task = session.dataTaskWithRequest(request) {
+                
+                (data, response, error) in
+                
+                if let response = response as? NSHTTPURLResponse {
+                    if response.statusCode == 204 {
+                        completion()
+                        print("this repo is starred already")
+                    } else {
+                        print("ErrorPut: \(error)")
+                    }
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    //This removes the star
+    class func unstarRepository(fullName: String, completion: () -> ()) {
+        
+        let session = NSURLSession.sharedSession()
+        let urlString = "https://api.github.com/user/starred/\(fullName)"
+        let url = NSURL(string: urlString)
+        
+        if let unwrappedURL = url {
+            
+            let request = NSMutableURLRequest(URL: unwrappedURL)
+            request.HTTPMethod = "DELETE"
+            request.addValue(secret, forHTTPHeaderField: "Authorization")
+            
+            let task = session.dataTaskWithRequest(request) {
+                
+                (data, response, error) in
+                
+                if let response = response as? NSHTTPURLResponse {
+                    if response.statusCode == 204 {
+                        completion()
+                        print("this repo is starred already")
+                    } else {
+                        print("ErrorDelete: \(error)")
+                    }
+                }
+            }
+            task.resume()
+        }
+    }
+
+    
+}
+
+
 
